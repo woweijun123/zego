@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Zego;
 
 use Closure;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Guzzle\ClientFactory;
 use InvalidArgumentException;
 use JsonException;
 use Random\RandomException;
@@ -193,13 +194,12 @@ readonly class ZegoRtcApiClient
         }
 
         // 2. 使用 Guzzle Client
-        // 建议：$this->httpClient 应该在构造函数中初始化并注入
-        $client = new Client([
-                                 RequestOptions::TIMEOUT     => 30, // 30 秒超时
-                                 RequestOptions::HTTP_ERRORS => false, // 禁用自动抛出异常，以便我们手动处理 body 内容
-                             ]);
-
         try {
+            $options = [
+                RequestOptions::TIMEOUT     => 30, // 30 秒超时
+                RequestOptions::HTTP_ERRORS => false, // 禁用自动抛出异常，以便我们手动处理 body 内容
+            ];
+            $client  = ApplicationContext::getContainer()->get(ClientFactory::class)->create($options);
             $response = $client->get($url);
             $code     = $response->getStatusCode();
             $body     = (string)$response->getBody();
