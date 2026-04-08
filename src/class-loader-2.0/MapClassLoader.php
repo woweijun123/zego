@@ -13,16 +13,14 @@ namespace Symfony\Component\ClassLoader;
 
 /**
  * A class loader that uses a mapping file to look up paths.
- *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class MapClassLoader
 {
-    private $map = array();
+    private $map = [];
 
     /**
      * Constructor.
-     *
      * @param array $map A map where keys are classes and values the absolute file path
      */
     public function __construct(array $map)
@@ -32,17 +30,15 @@ class MapClassLoader
 
     /**
      * Registers this instance as an autoloader.
-     *
      * @param Boolean $prepend Whether to prepend the autoloader or not
      */
     public function register($prepend = false)
     {
-        spl_autoload_register(array($this, 'loadClass'), true, $prepend);
+        spl_autoload_register([$this, 'loadClass'], true, $prepend);
     }
 
     /**
      * Loads the given class or interface.
-     *
      * @param string $class The name of the class
      */
     public function loadClass($class)
@@ -58,9 +54,7 @@ class MapClassLoader
 
     /**
      * Finds the path to the file where the class is defined.
-     *
      * @param string $class The name of the class
-     *
      * @return string|null The path, if found
      */
     public function findFile($class)

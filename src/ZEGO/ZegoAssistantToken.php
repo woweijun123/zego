@@ -1,7 +1,9 @@
 <?php
+
 namespace ZEGO;
 
-class ZegoAssistantToken{
+class ZegoAssistantToken
+{
     public $code;
     public $message = '';
     public $token;

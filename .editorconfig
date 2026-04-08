@@ -1,0 +1,582 @@
+; ----------------------------------------------------
+; 1. 通用配置 (Global Settings) - 适用于所有文件
+; ----------------------------------------------------
+[*]
+; 字符集：所有文件使用 UTF-8 编码
+charset = utf-8
+; 行尾符：使用 Unix 风格的 LF (Line Feed)
+end_of_line = lf
+; 缩进大小：4 个空格
+indent_size = 4
+; 缩进风格：使用空格
+indent_style = space
+; 文件末尾不插入空行
+insert_final_newline = false
+; 最大行长度限制为 210
+max_line_length = 160
+; Tab 宽度：4 个空格
+tab_width = 4
+; IDEA: 续行缩进大小为 8 个空格
+ij_continuation_indent_size = 8
+; IDEA: 格式化开关标签
+ij_formatter_off_tag = @formatter:off
+ij_formatter_on_tag = @formatter:on
+ij_formatter_tags_enabled = false
+; IDEA: 智能 Tab
+ij_smart_tabs = false
+; IDEA: 可视引导线
+ij_visual_guides = none
+; IDEA: 打字时自动换行
+ij_wrap_on_typing = false
+
+; ----------------------------------------------------
+; 2. Blade 模板配置 (Blade Template Settings)
+; ----------------------------------------------------
+[*.blade.php]
+; IDEA Blade: 不保留空行上的缩进
+ij_blade_keep_indents_on_empty_lines = false
+
+; ----------------------------------------------------
+; 3. Protocol Buffers 配置 (Protobuf Settings)
+; ----------------------------------------------------
+[*.proto]
+; IDEA Protobuf: Imports 后留 1 个空行
+ij_protobuf_blank_lines_after_imports = 1
+; IDEA Protobuf: Package 后留 1 个空行
+ij_protobuf_blank_lines_after_package = 1
+; IDEA Protobuf: 不保留空行上的缩进
+ij_protobuf_keep_indents_on_empty_lines = false
+; IDEA Protobuf: 冒号 `:` 后面有空格
+ij_protobuf_space_after_colon = true
+; IDEA Protobuf: 逗号 `,` 后面有空格
+ij_protobuf_space_after_comma = true
+; IDEA Protobuf: 类左花括号 `{` 前有空格
+ij_protobuf_space_before_class_left_brace = true
+; IDEA Protobuf: 冒号 `:` 前面没有空格
+ij_protobuf_space_before_colon = false
+; IDEA Protobuf: 逗号 `,` 前面没有空格
+ij_protobuf_space_before_comma = false
+; IDEA Protobuf: 方法左花括号 `{` 前有空格
+ij_protobuf_space_before_method_left_brace = true
+; IDEA Protobuf: 赋值运算符 `=` 周围有空格
+ij_protobuf_spaces_around_assignment_operators = true
+; IDEA Protobuf: 花括号 `{}` 内部没有空格
+ij_protobuf_spaces_within_braces = false
+; IDEA Protobuf: 中括号 `[]` 内部没有空格
+ij_protobuf_spaces_within_brackets = false
+; IDEA Protobuf: 小括号 `()` 内部没有空格
+ij_protobuf_spaces_within_parentheses = false
+
+; ----------------------------------------------------
+; 4. Shell 脚本配置 (Shell Script Settings)
+; ----------------------------------------------------
+[{*.bash,*.sh,*.zsh}]
+; 缩进大小改为 2
+indent_size = 2
+; Tab 宽度改为 2
+tab_width = 2
+; IDEA Shell: 二元运算符不另起一行
+ij_shell_binary_ops_start_line = false
+; IDEA Shell: 不保留列对齐的填充
+ij_shell_keep_column_alignment_padding = false
+; IDEA Shell: 不压缩程序代码
+ij_shell_minify_program = false
+; IDEA Shell: 重定向符号后不强制跟随空格
+ij_shell_redirect_followed_by_space = false
+; IDEA Shell: switch/case 语句的 body 不缩进
+ij_shell_switch_cases_indented = false
+; IDEA Shell: 使用 Unix 风格的行分隔符
+ij_shell_use_unix_line_separator = true
+
+; ----------------------------------------------------
+; 5. PHP 核心配置 (PHP Core Settings)
+; ----------------------------------------------------
+[{*.ctp,*.hphp,*.inc,*.module,*.php,*.php4,*.php5,*.phtml,check,swoolefy,think}]
+; IDEA: 续行缩进大小改为 4
+ij_continuation_indent_size = 4
+; IDEA PHP: 对齐连续的赋值操作符
+ij_php_align_assignments = true
+; IDEA PHP: 对齐类常量
+ij_php_align_class_constants = true
+; IDEA PHP: 对齐字段声明的分组
+ij_php_align_group_field_declarations = true
+; IDEA PHP: 对齐行内注释
+ij_php_align_inline_comments = true
+; IDEA PHP: 对齐数组的键值对 (=> 符号)
+ij_php_align_key_value_pairs = true
+; IDEA PHP:  Match 表达式的 Body 对齐
+ij_php_align_match_arm_bodies = true
+; IDEA PHP: 对齐多行数组初始化表达式
+ij_php_align_multiline_array_initializer_expression = true
+; IDEA PHP: 对齐多行二元操作符
+ij_php_align_multiline_binary_operation = true
+; IDEA PHP: 对齐多行链式方法调用 (->)
+ij_php_align_multiline_chained_methods = true
+; IDEA PHP: 对齐多行 extends/implements 列表
+ij_php_align_multiline_extends_list = true
+; IDEA PHP: 对齐多行 for 语句
+ij_php_align_multiline_for = true
+; IDEA PHP: 对齐多行参数列表
+ij_php_align_multiline_parameters = true
+; IDEA PHP: 对齐多行调用参数
+ij_php_align_multiline_parameters_in_calls = true
+; IDEA PHP: 对齐多行三元运算符 (? : )
+ij_php_align_multiline_ternary_operation = true
+; IDEA PHP: 对齐具名参数
+ij_php_align_named_arguments = true
+; IDEA PHP: 对齐 PHPDoc 注释块
+ij_php_align_phpdoc_comments = true
+; IDEA PHP: 对齐 PHPDoc 中的 @param 变量名
+ij_php_align_phpdoc_param_names = true
+; IDEA PHP: 匿名类和匿名函数的花括号风格在行尾 (K&R)
+ij_php_anonymous_brace_style = end_of_line
+; IDEA PHP: API 标签权重设为 28
+ij_php_api_weight = 28
+; IDEA PHP: 数组初始化，左中括号 `[` 后换行
+ij_php_array_initializer_new_line_after_left_brace = true
+; IDEA PHP: 数组初始化，右中括号 `]` 另起一行
+ij_php_array_initializer_right_brace_on_new_line = true
+; IDEA PHP: 数组初始化，每个元素后换行（多行数组）
+ij_php_array_initializer_wrap = on_every_item
+; IDEA PHP: 赋值语句的换行
+ij_php_assignment_wrap = off
+; IDEA PHP: 属性的换行
+ij_php_attributes_wrap = off
+; IDEA PHP: Author 标签权重设为 28
+ij_php_author_weight = 28
+; IDEA PHP: 二元运算符符号不放在下一行
+ij_php_binary_operation_sign_on_next_line = false
+; IDEA PHP: 二元运算的换行
+ij_php_binary_operation_wrap = off
+; IDEA PHP: 类头后不留空行
+ij_php_blank_lines_after_class_header = 0
+; IDEA PHP: 函数定义后留 1 个空行
+ij_php_blank_lines_after_function = 1
+; IDEA PHP: 导入语句 (use) 后留 1 个空行
+ij_php_blank_lines_after_imports = 1
+; IDEA PHP: PHP 开头标签后留 1 个空行
+ij_php_blank_lines_after_opening_tag = 1
+; IDEA PHP: 命名空间后留 1 个空行
+ij_php_blank_lines_after_package = 1
+; IDEA PHP: 类定义周围留 1 个空行
+ij_php_blank_lines_around_class = 1
+; IDEA PHP: 常量周围不留空行
+ij_php_blank_lines_around_constants = 0
+; IDEA PHP: 字段（属性）周围不留空行
+ij_php_blank_lines_around_field = 0
+; IDEA PHP: 方法定义周围留 1 个空行
+ij_php_blank_lines_around_method = 1
+; IDEA PHP: 类结束前不留空行
+ij_php_blank_lines_before_class_end = 0
+; IDEA PHP: 导入语句 (use) 前留 1 个空行
+ij_php_blank_lines_before_imports = 1
+; IDEA PHP: 方法体 `{` 前不留空行
+ij_php_blank_lines_before_method_body = 0
+; IDEA PHP: 命名空间前留 1 个空行
+ij_php_blank_lines_before_package = 1
+; IDEA PHP: return 语句前留 1 个空行
+ij_php_blank_lines_before_return_statement = 1
+; IDEA PHP: 导入语句 (use) 之间留 1 个空行
+ij_php_blank_lines_between_imports = 1
+; IDEA PHP: 代码块的花括号风格在行尾 (K&R)
+ij_php_block_brace_style = end_of_line
+; IDEA PHP: 函数调用参数，左小括号 `(` 后换行
+ij_php_call_parameters_new_line_after_left_paren = true
+; IDEA PHP: 函数调用参数，右小括号 `)` 另起一行
+ij_php_call_parameters_right_paren_on_new_line = true
+; IDEA PHP: 函数调用参数，每个参数后换行（多行参数）
+ij_php_call_parameters_wrap = on_every_item
+; IDEA PHP: catch 关键字不另起一行
+ij_php_catch_on_new_line = false
+; IDEA PHP: Category 标签权重设为 28
+ij_php_category_weight = 28
+; IDEA PHP: 类花括号风格在下一行 (Allman)
+ij_php_class_brace_style = next_line
+; IDEA PHP: 数组或列表的最后一个元素后保留逗号
+ij_php_comma_after_last_array_element = true
+; IDEA PHP: 字符串连接符 `.` 周围有空格
+ij_php_concat_spaces = true
+; IDEA PHP: Copyright 标签权重设为 28
+ij_php_copyright_weight = 28
+; IDEA PHP: Deprecated 标签权重设为 28
+ij_php_deprecated_weight = 28
+; IDEA PHP: do-while 语句强制使用花括号
+ij_php_do_while_brace_force = always
+; IDEA PHP: 使用 `elseif` 组合风格
+ij_php_else_if_style = combine
+; IDEA PHP: else 关键字不另起一行
+ij_php_else_on_new_line = false
+; IDEA PHP: Example 标签权重设为 28
+ij_php_example_weight = 28
+; IDEA PHP: extends 关键字不换行
+ij_php_extends_keyword_wrap = off
+; IDEA PHP: extends 列表每个元素后换行
+ij_php_extends_list_wrap = on_every_item
+; IDEA PHP: 字段默认可见性设为 private
+ij_php_fields_default_visibility = private
+; IDEA PHP: FileSource 标签权重设为 28
+ij_php_filesource_weight = 28
+; IDEA PHP: finally 关键字不另起一行
+ij_php_finally_on_new_line = false
+; IDEA PHP: for 语句强制使用花括号
+ij_php_for_brace_force = always
+; IDEA PHP: for 语句，左小括号 `(` 后换行
+ij_php_for_statement_new_line_after_left_paren = true
+; IDEA PHP: for 语句，右小括号 `)` 另起一行
+ij_php_for_statement_right_paren_on_new_line = true
+; IDEA PHP: for 语句不换行
+ij_php_for_statement_wrap = off
+; IDEA PHP: 强制使用短数组语法（`[]`）
+ij_php_force_short_declaration_array_style = true
+; IDEA PHP: Getter/Setter 使用驼峰式命名
+ij_php_getters_setters_naming_style = camel_case
+; IDEA PHP: Getter/Setter 顺序：Getter 优先
+ij_php_getters_setters_order_style = getters_first
+; IDEA PHP: Global 标签权重设为 28
+ij_php_global_weight = 28
+; IDEA PHP: 导入分组 (Group Use) 每个元素后换行
+ij_php_group_use_wrap = on_every_item
+; IDEA PHP: if 语句强制使用花括号
+ij_php_if_brace_force = always
+; IDEA PHP: if 语句左小括号不另起一行
+ij_php_if_lparen_on_next_line = false
+; IDEA PHP: if 语句右小括号不另起一行
+ij_php_if_rparen_on_next_line = false
+; IDEA PHP: Ignore 标签权重设为 28
+ij_php_ignore_weight = 28
+; IDEA PHP: 导入语句排序：按字母顺序
+ij_php_import_sorting = alphabetic
+; IDEA PHP: switch 语句中 case 内部的 break 缩进
+ij_php_indent_break_from_case = true
+; IDEA PHP: switch 语句中 case 缩进
+ij_php_indent_case_from_switch = true
+; IDEA PHP: PHP 标签内部的代码不缩进
+ij_php_indent_code_in_php_tags = false
+; IDEA PHP: Internal 标签权重设为 28
+ij_php_internal_weight = 28
+; IDEA PHP: `{` 后不保留空行
+ij_php_keep_blank_lines_after_lbrace = 0
+; IDEA PHP: `}` 前不保留空行
+ij_php_keep_blank_lines_before_right_brace = 0
+; IDEA PHP: 代码中最多保留 2 个连续空行
+ij_php_keep_blank_lines_in_code = 2
+; IDEA PHP: 声明中最多保留 2 个连续空行
+ij_php_keep_blank_lines_in_declarations = 2
+; IDEA PHP: 不将控制语句保持在同一行
+ij_php_keep_control_statement_in_one_line = false
+; IDEA PHP: 不保留第一列的注释
+ij_php_keep_first_column_comment = false
+; IDEA PHP: 不保留空行上的缩进
+ij_php_keep_indents_on_empty_lines = false
+; IDEA PHP: 保留换行符
+ij_php_keep_line_breaks = true
+; IDEA PHP: 保留右小括号和左花括号在同一行
+ij_php_keep_rparen_and_lbrace_on_one_line = true
+; IDEA PHP: 不将简单的类保持在同一行
+ij_php_keep_simple_classes_in_one_line = false
+; IDEA PHP: 不将简单的方法保持在同一行
+ij_php_keep_simple_methods_in_one_line = false
+; IDEA PHP: 匿名函数花括号风格在行尾 (K&R)
+ij_php_lambda_brace_style = end_of_line
+; IDEA PHP: License 标签权重设为 28
+ij_php_license_weight = 28
+; IDEA PHP: 行注释符号 `//` 后添加一个空格
+ij_php_line_comment_add_space = true
+; IDEA PHP: 行注释不放在第一列
+ij_php_line_comment_at_first_column = false
+; IDEA PHP: Link 标签权重设为 28
+ij_php_link_weight = 28
+; IDEA PHP: 布尔常量使用小写 (`true`, `false`)
+ij_php_lower_case_boolean_const = true
+; IDEA PHP: 关键字使用小写
+ij_php_lower_case_keywords = true
+; IDEA PHP: null 常量使用小写 (`null`)
+ij_php_lower_case_null_const = true
+; IDEA PHP: 方法花括号风格在下一行 (Allman)
+ij_php_method_brace_style = next_line
+; IDEA PHP: 方法调用链换行风格设为 normal
+ij_php_method_call_chain_wrap = normal
+; IDEA PHP: 方法参数，左小括号 `(` 后换行
+ij_php_method_parameters_new_line_after_left_paren = true
+; IDEA PHP: 方法参数，右小括号 `)` 另起一行
+ij_php_method_parameters_right_paren_on_new_line = true
+; IDEA PHP: 方法参数，每个参数后换行（多行参数）
+ij_php_method_parameters_wrap = on_every_item
+; IDEA PHP: Method 标签权重设为 28
+ij_php_method_weight = 28
+; IDEA PHP: 修饰符列表换行
+ij_php_modifier_list_wrap = false
+; IDEA PHP: 多行链式调用分号不另起一行
+ij_php_multiline_chained_calls_semicolon_on_new_line = false
+; IDEA PHP: 命名空间花括号风格设为 2
+ij_php_namespace_brace_style = 2
+; IDEA PHP: 在 PHP 开头标签后插入新行
+ij_php_new_line_after_php_opening_tag = true
+; IDEA PHP: Union Type 中的 null 类型放在末尾 (`| null`)
+ij_php_null_type_position = in_the_end
+; IDEA PHP: Package 标签权重设为 28
+ij_php_package_weight = 28
+; IDEA PHP: Param 标签权重设为 0
+ij_php_param_weight = 0
+; IDEA PHP: 参数属性换行
+ij_php_parameters_attributes_wrap = off
+; IDEA PHP: 表达式小括号 `(` 后不换行
+ij_php_parentheses_expression_new_line_after_left_paren = false
+; IDEA PHP: 表达式小括号 `)` 前不换行
+ij_php_parentheses_expression_right_paren_on_new_line = false
+; IDEA PHP: PHPDoc 标签前不留空行
+ij_php_phpdoc_blank_line_before_tags = false
+; IDEA PHP: PHPDoc 参数周围不留空行
+ij_php_phpdoc_blank_lines_around_parameters = false
+; IDEA PHP: PHPDoc 中不保留空行
+ij_php_phpdoc_keep_blank_lines = false
+; IDEA PHP: PHPDoc @param 变量名和描述之间有 1 个空格
+ij_php_phpdoc_param_spaces_between_name_and_description = 1
+; IDEA PHP: PHPDoc @param 标签和类型之间有 1 个空格
+ij_php_phpdoc_param_spaces_between_tag_and_type = 1
+; IDEA PHP: PHPDoc @param 类型和变量名之间有 1 个空格
+ij_php_phpdoc_param_spaces_between_type_and_name = 1
+; IDEA PHP: PHPDoc 不使用完全限定类名 (FQCN)
+ij_php_phpdoc_use_fqcn = false
+; IDEA PHP: PHPDoc 自动换行长行
+ij_php_phpdoc_wrap_long_lines = true
+; IDEA PHP: 赋值操作符不放在下一行
+ij_php_place_assignment_sign_on_next_line = false
+; IDEA PHP: 构造函数小括号的使用方式设为 0
+ij_php_place_parens_for_constructor = 0
+; IDEA PHP: Property Read 标签权重设为 28
+ij_php_property_read_weight = 28
+; IDEA PHP: Property 标签权重设为 28
+ij_php_property_weight = 28
+; IDEA PHP: Property Write 标签权重设为 28
+ij_php_property_write_weight = 28
+; IDEA PHP: 返回类型不另起一行
+ij_php_return_type_on_new_line = false
+; IDEA PHP: Return 标签权重设为 1
+ij_php_return_weight = 1
+; IDEA PHP: See 标签权重设为 28
+ij_php_see_weight = 28
+; IDEA PHP: Since 标签权重设为 28
+ij_php_since_weight = 28
+; IDEA PHP: PHPDoc 元素按权重排序
+ij_php_sort_phpdoc_elements = true
+; IDEA PHP: 冒号 `:` 后面有空格
+ij_php_space_after_colon = true
+; IDEA PHP: Enum Backed Type 冒号后面有空格
+ij_php_space_after_colon_in_enum_backed_type = true
+; IDEA PHP: 具名参数冒号后面有空格
+ij_php_space_after_colon_in_named_argument = true
+; IDEA PHP: 返回类型冒号后面有空格
+ij_php_space_after_colon_in_return_type = true
+; IDEA PHP: 逗号 `,` 后面有空格
+ij_php_space_after_comma = true
+; IDEA PHP: for 语句分号 `;` 后面有空格
+ij_php_space_after_for_semicolon = true
+; IDEA PHP: 问号 `?` 后面有空格
+ij_php_space_after_quest = true
+; IDEA PHP: 类型转换后没有空格
+ij_php_space_after_type_cast = false
+; IDEA PHP: 逻辑非运算符 `!` 后没有空格
+ij_php_space_after_unary_not = false
+; IDEA PHP: 数组初始化左花括号 `{` 前没有空格
+ij_php_space_before_array_initializer_left_brace = false
+; IDEA PHP: catch 关键字前有空格
+ij_php_space_before_catch_keyword = true
+; IDEA PHP: catch 块左花括号 `{` 前有空格
+ij_php_space_before_catch_left_brace = true
+; IDEA PHP: catch 小括号 `()` 前有空格
+ij_php_space_before_catch_parentheses = true
+; IDEA PHP: 类左花括号 `{` 前有空格
+ij_php_space_before_class_left_brace = true
+; IDEA PHP: 闭包左小括号 `(` 前有空格
+ij_php_space_before_closure_left_parenthesis = true
+; IDEA PHP: 冒号 `:` 前面有空格
+ij_php_space_before_colon = true
+; IDEA PHP: Enum Backed Type 冒号前面没有空格
+ij_php_space_before_colon_in_enum_backed_type = false
+; IDEA PHP: 具名参数冒号前面没有空格
+ij_php_space_before_colon_in_named_argument = false
+; IDEA PHP: 返回类型冒号前面没有空格
+ij_php_space_before_colon_in_return_type = false
+; IDEA PHP: 逗号 `,` 前面没有空格
+ij_php_space_before_comma = false
+; IDEA PHP: do-while 左花括号 `{` 前有空格
+ij_php_space_before_do_left_brace = true
+; IDEA PHP: else 关键字前有空格
+ij_php_space_before_else_keyword = true
+; IDEA PHP: else 左花括号 `{` 前有空格
+ij_php_space_before_else_left_brace = true
+; IDEA PHP: finally 关键字前有空格
+ij_php_space_before_finally_keyword = true
+; IDEA PHP: finally 左花括号 `{` 前有空格
+ij_php_space_before_finally_left_brace = true
+; IDEA PHP: for 语句左花括号 `{` 前有空格
+ij_php_space_before_for_left_brace = true
+; IDEA PHP: for 语句小括号 `()` 前有空格
+ij_php_space_before_for_parentheses = true
+; IDEA PHP: for 语句分号 `;` 前面没有空格
+ij_php_space_before_for_semicolon = false
+; IDEA PHP: if 语句左花括号 `{` 前有空格
+ij_php_space_before_if_left_brace = true
+; IDEA PHP: if 语句小括号 `()` 前有空格
+ij_php_space_before_if_parentheses = true
+; IDEA PHP: 方法调用小括号 `()` 前面没有空格
+ij_php_space_before_method_call_parentheses = false
+; IDEA PHP: 方法左花括号 `{` 前有空格
+ij_php_space_before_method_left_brace = true
+; IDEA PHP: 方法参数小括号 `()` 前面没有空格
+ij_php_space_before_method_parentheses = false
+; IDEA PHP: 问号 `?` 前面有空格
+ij_php_space_before_quest = true
+; IDEA PHP: 箭头函数左小括号 `(` 前面没有空格
+ij_php_space_before_short_closure_left_parenthesis = false
+; IDEA PHP: switch 语句左花括号 `{` 前有空格
+ij_php_space_before_switch_left_brace = true
+; IDEA PHP: switch 语句小括号 `()` 前有空格
+ij_php_space_before_switch_parentheses = true
+; IDEA PHP: try 语句左花括号 `{` 前有空格
+ij_php_space_before_try_left_brace = true
+; IDEA PHP: 逻辑非运算符 `!` 前没有空格
+ij_php_space_before_unary_not = false
+; IDEA PHP: while 关键字前有空格
+ij_php_space_before_while_keyword = true
+; IDEA PHP: while 语句左花括号 `{` 前有空格
+ij_php_space_before_while_left_brace = true
+; IDEA PHP: while 语句小括号 `()` 前有空格
+ij_php_space_before_while_parentheses = true
+; IDEA PHP: 三元运算符的问号 `?` 和冒号 `:` 之间没有空格
+ij_php_space_between_ternary_quest_and_colon = false
+; IDEA PHP: 加减运算符周围有空格
+ij_php_spaces_around_additive_operators = true
+; IDEA PHP: 箭头运算符 `->` 周围没有空格
+ij_php_spaces_around_arrow = false
+; IDEA PHP: declare 语句中的赋值运算符周围没有空格
+ij_php_spaces_around_assignment_in_declare = false
+; IDEA PHP: 赋值运算符周围有空格
+ij_php_spaces_around_assignment_operators = true
+; IDEA PHP: 位运算符周围有空格
+ij_php_spaces_around_bitwise_operators = true
+; IDEA PHP: 等值运算符（==, !=, ===）周围有空格
+ij_php_spaces_around_equality_operators = true
+; IDEA PHP: 逻辑运算符（&&, ||）周围有空格
+ij_php_spaces_around_logical_operators = true
+; IDEA PHP: 乘除运算符周围有空格
+ij_php_spaces_around_multiplicative_operators = true
+; IDEA PHP: Null 合并运算符 `??` 周围有空格
+ij_php_spaces_around_null_coalesce_operator = true
+; IDEA PHP: Union Type 的管道符 `|` 周围没有空格
+ij_php_spaces_around_pipe_in_union_type = false
+; IDEA PHP: 关系运算符（<, >, <=）周围有空格
+ij_php_spaces_around_relational_operators = true
+; IDEA PHP: 移位运算符周围有空格
+ij_php_spaces_around_shift_operators = true
+; IDEA PHP: 一元运算符周围没有空格
+ij_php_spaces_around_unary_operator = false
+; IDEA PHP: 变量方括号 `[]` 内部没有空格
+ij_php_spaces_around_var_within_brackets = false
+; IDEA PHP: 数组初始化花括号 `{}` 内部没有空格
+ij_php_spaces_within_array_initializer_braces = false
+; IDEA PHP: 中括号 `[]` 内部没有空格
+ij_php_spaces_within_brackets = false
+; IDEA PHP: catch 小括号 `()` 内部没有空格
+ij_php_spaces_within_catch_parentheses = false
+; IDEA PHP: for 小括号 `()` 内部没有空格
+ij_php_spaces_within_for_parentheses = false
+; IDEA PHP: if 小括号 `()` 内部没有空格
+ij_php_spaces_within_if_parentheses = false
+; IDEA PHP: 方法调用小括号 `()` 内部没有空格
+ij_php_spaces_within_method_call_parentheses = false
+; IDEA PHP: 方法参数小括号 `()` 内部没有空格
+ij_php_spaces_within_method_parentheses = false
+; IDEA PHP: 普通小括号 `()` 内部没有空格
+ij_php_spaces_within_parentheses = false
+; IDEA PHP: 短 echo 标签 `<?= ... ?>` 内部没有空格
+ij_php_spaces_within_short_echo_tags = false
+; IDEA PHP: switch 小括号 `()` 内部没有空格
+ij_php_spaces_within_switch_parentheses = false
+; IDEA PHP: while 小括号 `()` 内部没有空格
+ij_php_spaces_within_while_parentheses = false
+; IDEA PHP: 对 `else if` 进行特殊处理
+ij_php_special_else_if_treatment = true
+; IDEA PHP: Subpackage 标签权重设为 28
+ij_php_subpackage_weight = 28
+; IDEA PHP: 三元运算符符号不放在下一行
+ij_php_ternary_operation_signs_on_next_line = false
+; IDEA PHP: 三元运算符的换行
+ij_php_ternary_operation_wrap = off
+; IDEA PHP: Throws 标签权重设为 2
+ij_php_throws_weight = 2
+; IDEA PHP: Todo 标签权重设为 28
+ij_php_todo_weight = 28
+; IDEA PHP: 未知标签权重设为 28
+ij_php_unknown_tag_weight = 28
+; IDEA PHP: 布尔常量不使用大写
+ij_php_upper_case_boolean_const = false
+; IDEA PHP: Null 常量不使用大写
+ij_php_upper_case_null_const = false
+; IDEA PHP: Uses 标签权重设为 28
+ij_php_uses_weight = 28
+; IDEA PHP: Var 标签权重设为 28
+ij_php_var_weight = 28
+; IDEA PHP: 变量命名风格使用混合式
+ij_php_variable_naming_style = mixed
+; IDEA PHP: Version 标签权重设为 28
+ij_php_version_weight = 28
+; IDEA PHP: while 语句强制使用花括号
+ij_php_while_brace_force = always
+; IDEA PHP: while 关键字不另起一行
+ij_php_while_on_new_line = false
+
+; ----------------------------------------------------
+; 6. Markdown 配置 (Markdown Settings)
+; ----------------------------------------------------
+[{*.markdown,*.md}]
+; IDEA Markdown: 强制在 Blockquote 符号 `>` 后留一个空格
+ij_markdown_force_one_space_after_blockquote_symbol = true
+; IDEA Markdown: 强制在 Header 符号 `#` 后留一个空格
+ij_markdown_force_one_space_after_header_symbol = true
+; IDEA Markdown: 强制在列表符号后留一个空格
+ij_markdown_force_one_space_after_list_bullet = true
+; IDEA Markdown: 强制单词之间只有一个空格
+ij_markdown_force_one_space_between_words = true
+; IDEA Markdown: 不保留空行上的缩进
+ij_markdown_keep_indents_on_empty_lines = false
+; IDEA Markdown: 块级元素周围最多 1 个空行
+ij_markdown_max_lines_around_block_elements = 1
+; IDEA Markdown: 标题周围最多 1 个空行
+ij_markdown_max_lines_around_header = 1
+; IDEA Markdown: 段落之间最多 1 个空行
+ij_markdown_max_lines_between_paragraphs = 1
+; IDEA Markdown: 块级元素周围最少 1 个空行
+ij_markdown_min_lines_around_block_elements = 1
+; IDEA Markdown: 标题周围最少 1 个空行
+ij_markdown_min_lines_around_header = 1
+; IDEA Markdown: 段落之间最少 1 个空行
+ij_markdown_min_lines_between_paragraphs = 1
+
+; ----------------------------------------------------
+; 7. YAML 配置 (YAML Settings)
+; ----------------------------------------------------
+[{*.yaml,*.yml}]
+; 缩进大小改为 2
+indent_size = 2
+; IDEA YAML: 值和属性不对齐
+ij_yaml_align_values_properties = do_not_align
+; IDEA YAML: 自动插入序列标记
+ij_yaml_autoinsert_sequence_marker = true
+; IDEA YAML: 块映射不另起一行
+ij_yaml_block_mapping_on_new_line = false
+; IDEA YAML: 序列值缩进
+ij_yaml_indent_sequence_value = true
+; IDEA YAML: 不保留空行上的缩进
+ij_yaml_keep_indents_on_empty_lines = false
+; IDEA YAML: 保留换行符
+ij_yaml_keep_line_breaks = true
+; IDEA YAML: 序列不另起一行
+ij_yaml_sequence_on_new_line = false
+; IDEA YAML: 冒号 `:` 前面没有空格
+ij_yaml_space_before_colon = false
+; IDEA YAML: 花括号 `{}` 内部有空格
+ij_yaml_spaces_within_braces = true
+; IDEA YAML: 中括号 `[]` 内部有空格
+ij_yaml_spaces_within_brackets = true

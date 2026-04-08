@@ -13,7 +13,6 @@ namespace Symfony\Component\ClassLoader;
 
 /**
  * ClassCollectionLoader.
- *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class ClassCollectionLoader
@@ -23,14 +22,12 @@ class ClassCollectionLoader
 
     /**
      * Loads a list of classes and caches them in one big file.
-     *
      * @param array   $classes    An array of classes to load
      * @param string  $cacheDir   A cache directory
      * @param string  $name       The cache name prefix
      * @param Boolean $autoReload Whether to flush the cache when the cache is stale or not
      * @param Boolean $adaptive   Whether to remove already declared classes or not
      * @param string  $extension  File extension of the resulting file
-     *
      * @throws \InvalidArgumentException When class can't be loaded
      */
     public static function load($classes, $cacheDir, $name, $autoReload, $adaptive = false, $extension = '.php')
@@ -47,15 +44,15 @@ class ClassCollectionLoader
             $classes = array_diff($classes, get_declared_classes(), get_declared_interfaces());
 
             // the cache is different depending on which classes are already declared
-            $name = $name.'-'.substr(md5(implode('|', $classes)), 0, 5);
+            $name = $name . '-' . substr(md5(implode('|', $classes)), 0, 5);
         }
 
-        $cache = $cacheDir.'/'.$name.$extension;
+        $cache = $cacheDir . '/' . $name . $extension;
 
         // auto-reload
         $reload = false;
         if ($autoReload) {
-            $metadata = $cacheDir.'/'.$name.$extension.'.meta';
+            $metadata = $cacheDir . '/' . $name . $extension . '.meta';
             if (!file_exists($metadata) || !file_exists($cache)) {
                 $reload = true;
             } else {
@@ -82,23 +79,23 @@ class ClassCollectionLoader
             return;
         }
 
-        $files = array();
+        $files   = [];
         $content = '';
         foreach ($classes as $class) {
             if (!class_exists($class) && !interface_exists($class) && (!function_exists('trait_exists') || !trait_exists($class))) {
                 throw new \InvalidArgumentException(sprintf('Unable to load class "%s"', $class));
             }
 
-            $r = new \ReflectionClass($class);
+            $r       = new \ReflectionClass($class);
             $files[] = $r->getFileName();
 
-            $c = preg_replace(array('/^\s*<\?php/', '/\?>\s*$/'), '', file_get_contents($r->getFileName()));
+            $c = preg_replace(['/^\s*<\?php/', '/\?>\s*$/'], '', file_get_contents($r->getFileName()));
 
             // add namespace declaration for global code
             if (!$r->inNamespace()) {
-                $c = "\nnamespace\n{\n".self::stripComments($c)."\n}\n";
+                $c = "\nnamespace\n{\n" . self::stripComments($c) . "\n}\n";
             } else {
-                $c = self::fixNamespaceDeclarations('<?php '.$c);
+                $c = self::fixNamespaceDeclarations('<?php ' . $c);
                 $c = preg_replace('/^\s*<\?php/', '', $c);
             }
 
@@ -109,40 +106,38 @@ class ClassCollectionLoader
         if (!is_dir(dirname($cache))) {
             mkdir(dirname($cache), 0777, true);
         }
-        self::writeCacheFile($cache, '<?php '.$content);
+        self::writeCacheFile($cache, '<?php ' . $content);
 
         if ($autoReload) {
             // save the resources
-            self::writeCacheFile($metadata, serialize(array($files, $classes)));
+            self::writeCacheFile($metadata, serialize([$files, $classes]));
         }
     }
 
     /**
      * Adds brackets around each namespace if it's not already the case.
-     *
      * @param string $source Namespace string
-     *
      * @return string Namespaces with brackets
      */
     public static function fixNamespaceDeclarations($source)
     {
         if (!function_exists('token_get_all') || !self::$useTokenizer) {
             if (preg_match('/namespace(.*?)\s*;/', $source)) {
-                $source = preg_replace('/namespace(.*?)(\s*);/', "namespace$1$2\n{", $source)."}\n";
+                $source = preg_replace('/namespace(.*?)(\s*);/', "namespace$1$2\n{", $source) . "}\n";
             }
 
             return $source;
         }
 
-        $output = '';
+        $output      = '';
         $inNamespace = false;
-        $tokens = token_get_all($source);
+        $tokens      = token_get_all($source);
 
         for ($i = 0, $max = count($tokens); $i < $max; $i++) {
             $token = $tokens[$i];
             if (is_string($token)) {
                 $output .= $token;
-            } elseif (in_array($token[0], array(T_COMMENT, T_DOC_COMMENT))) {
+            } elseif (in_array($token[0], [T_COMMENT, T_DOC_COMMENT])) {
                 // strip comments
                 continue;
             } elseif (T_NAMESPACE === $token[0]) {
@@ -152,14 +147,14 @@ class ClassCollectionLoader
                 $output .= $token[1];
 
                 // namespace name and whitespaces
-                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], array(T_WHITESPACE, T_NS_SEPARATOR, T_STRING))) {
+                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], [T_WHITESPACE, T_NS_SEPARATOR, T_STRING])) {
                     $output .= $t[1];
                 }
                 if (is_string($t) && '{' === $t) {
                     $inNamespace = false;
                     --$i;
                 } else {
-                    $output .= "\n{";
+                    $output      .= "\n{";
                     $inNamespace = true;
                 }
             } else {
@@ -176,10 +171,8 @@ class ClassCollectionLoader
 
     /**
      * Writes a cache file.
-     *
      * @param string $file    Filename
      * @param string $content Temporary file content
-     *
      * @throws \RuntimeException when a cache file cannot be written
      */
     private static function writeCacheFile($file, $content)
@@ -196,12 +189,9 @@ class ClassCollectionLoader
 
     /**
      * Removes comments from a PHP source string.
-     *
      * We don't use the PHP php_strip_whitespace() function
      * as we want the content to be readable and well-formatted.
-     *
      * @param string $source A PHP string
-     *
      * @return string The PHP string with the comments removed
      */
     private static function stripComments($source)
@@ -214,13 +204,13 @@ class ClassCollectionLoader
         foreach (token_get_all($source) as $token) {
             if (is_string($token)) {
                 $output .= $token;
-            } elseif (!in_array($token[0], array(T_COMMENT, T_DOC_COMMENT))) {
+            } elseif (!in_array($token[0], [T_COMMENT, T_DOC_COMMENT])) {
                 $output .= $token[1];
             }
         }
 
         // replace multiple new lines with a single newline
-        $output = preg_replace(array('/\s+$/Sm', '/\n+/S'), "\n", $output);
+        $output = preg_replace(['/\s+$/Sm', '/\n+/S'], "\n", $output);
 
         return $output;
     }
@@ -230,6 +220,6 @@ class ClassCollectionLoader
      */
     public static function enableTokenizer($bool)
     {
-        self::$useTokenizer = (Boolean) $bool;
+        self::$useTokenizer = (boolean)$bool;
     }
 }

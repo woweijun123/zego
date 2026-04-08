@@ -1,5 +1,5 @@
 {
-  "name": "riven/zego",
+  "name": "riven/hyperf-zego",
   "type": "library",
   "description": "Zego Server Assistant",
   "keywords": [
@@ -9,15 +9,18 @@
   "homepage": "https://www.zego.im",
   "license": "MIT",
   "require": {
-    "php": ">=8.3"
+    "php": ">=8.3",
+    "hyperf/guzzle": "^3.1",
+    "hyperf/config": "~3.1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5"
+    "hyperf/devtool": "~3.1.0",
+    "hyperf/testing": "^3.1"
   },
   "autoload": {
     "psr-4": {
       "ZEGO\\": "src/ZEGO",
-      "App\\Tests\\": "test/"
+      "Test\\": "test/"
     }
   }
 }
