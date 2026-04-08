@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ZEGO;
+namespace Zego;
 
 class ConfigProvider
 {

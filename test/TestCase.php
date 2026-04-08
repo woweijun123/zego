@@ -14,7 +14,7 @@ define('BASE_PATH', dirname(__DIR__));
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Hyperf\Di\Container
+     * @var Container
      */
     protected $container;
 
@@ -48,7 +48,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     /**
      * 获取容器实例
-     * @return \Hyperf\Di\Container
+     * @return Container
      */
     protected function getContainer()
     {

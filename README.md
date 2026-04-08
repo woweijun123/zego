@@ -21,10 +21,10 @@ php bin/hyperf.php vendor:publish riven/hyperf-zego
 ### 普通token 生成demo
 - 在`/my_project/xxx.php`文件中使用
 - 普通token用于服务接口的简单权限验证的场景，payload字段可传空
+
 ```php
 require 'vendor/autoload.php';
-use ZEGO\ZegoServerAssistant;
-use ZEGO\ZegoErrorCodes;
+use Zego\ZegoErrorCodes;use Zego\ZegoServerAssistant;
 
 $appId = 1;
 $userId = 'demo';
@@ -39,10 +39,10 @@ if( $token->code == ZegoErrorCodes::success ){
 ### 强验证token 生成demo
 - 在`/my_project/xxx.php`文件中使用
 - 强验证token用于对房间登录/推拉流权限需要进行强验证的场景，payload字段需要按照规格生成
+
 ```php
 require 'vendor/autoload.php';
-use ZEGO\ZegoServerAssistant;
-use ZEGO\ZegoErrorCodes;
+use Zego\ZegoErrorCodes;use Zego\ZegoServerAssistant;
 
 //权限位定义
 const PrivilegeKeyLogin   = 1; // 登录
@@ -75,7 +75,7 @@ if( $token->code == ZegoErrorCodes::success ){
 
 ### 错误码说明
 ```php
-namespace ZEGO;
+namespace Zego;
 
 class ZegoErrorCodes{
     const success                       = 0;  // 获取鉴权 token 成功
@@ -104,7 +104,7 @@ class ZegoErrorCodes{
 返回值为`ZEGO\ZegoAssistantToken`对象：
 ```php
 
-namespace ZEGO;
+namespace Zego;
 
 class ZegoAssistantToken{
     public $code;

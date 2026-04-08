@@ -1,15 +1,15 @@
 <?php
 
-namespace ZEGO;
+namespace Zego;
+
+use Exception;
 
 class ZegoServerAssistant
 {
 
     private static function makeNonce()
     {
-        $nonce = rand();
-
-        return $nonce;
+        return mt_rand();
     }
 
     private static function makeRandomIv($number = 16)
@@ -19,7 +19,7 @@ class ZegoServerAssistant
         $result = [];
         $strLen = strlen($str);
         for ($i = 0; $i < $number; $i++) {
-            $result[] = $str[rand(0, $strLen - 1)];
+            $result[] = $str[random_int(0, $strLen - 1)];
         }
 
         return implode('', $result);
@@ -70,29 +70,23 @@ class ZegoServerAssistant
             return $assistantToken;
         }
 
-        $forTestNoce       = -626114709072274507;//9223372036854775807
+        $forTestNoce       = -626114709072274507; // 9223372036854775807
         $forTestCreateTime = 1619769776;
         $forTestIv         = "exn62lbokoa8n8jp";
 
-        //demo
-        //$forTestNoce = 9022377734291506982;
-        //$forTestCreateTime = 1619663663;
-        //$forTestIv = "forkislbyn0u28qw";
-
         $testMode = false;
 
-        $timestamp = $testMode ? $forTestCreateTime : time();//-for test +3600 = 1619667263
+        $timestamp = $testMode ? $forTestCreateTime : time(); // -for test +3600 = 1619667263
 
         $nonce = $testMode ? $forTestNoce : self::makeNonce();
-        $data  = ['app_id'  => $appId,
-                  'user_id' => $userId,
-                  'nonce'   => $nonce,
-                  'ctime'   => $timestamp,
-                  'expire'  => $timestamp + $effectiveTimeInSeconds,
-                  'payload' => $payload,
+        $data  = [
+            'app_id'  => $appId,
+            'user_id' => $userId,
+            'nonce'   => $nonce,
+            'ctime'   => $timestamp,
+            'expire'  => $timestamp + $effectiveTimeInSeconds,
+            'payload' => $payload,
         ];
-
-        $cipher = 'aes-128-cbc';
 
         $plaintext = json_encode($data, JSON_BIGINT_AS_STRING);
 
@@ -111,33 +105,13 @@ class ZegoServerAssistant
 
             default:
                 throw new Exception('secret length does not supported!');
-                break;
         }
 
-        //$ivlen = openssl_cipher_iv_length($cipher);
-        //$iv    = openssl_random_pseudo_bytes($ivlen);
-
-        $iv = $testMode ? $forTestIv : self::makeRandomIv();
-
-        $encrypted = openssl_encrypt($plaintext, $cipher, $secret, OPENSSL_RAW_DATA, $iv);
-
-        //64位有符号整型时间戳-BigEndian + 16位无符号整型iv字节长度计数-BigEndian + iv字符串 + 16位无符号整型aes加密后字符串字节长度计数-BigEndian + aes加密后字符串
-        $packData = [//$data['expire_time'],
-                     strlen($iv),
-                     $iv,
-                     strlen($encrypted),
-                     $encrypted,
-        ];
-
-        //print_r($packData);
-
-        //$binary = pack('q',$data['expire_time']);//q 有符号长长整型(64位，主机字节序)
-        $binary = pack('J', $data['expire']);                //J 无符号长长整型(64位，大端字节序)
-        $binary .= pack('na*na*', ...$packData);
-
-        //"03"字符串 + base64编码binary为字符串
-        //print_r(unpack('qq/nn/a*a',$binary));
-
+        $iv                    = $testMode ? $forTestIv : self::makeRandomIv();
+        $encrypted             = openssl_encrypt($plaintext, $cipher, $secret, OPENSSL_RAW_DATA, $iv);
+        $packData              = [strlen($iv), $iv, strlen($encrypted), $encrypted];
+        $binary                = pack('J', $data['expire']); // J 无符号长长整型(64位，大端字节序)
+        $binary                .= pack('na*na*', ...$packData);
         $assistantToken->token = '04' . base64_encode($binary);
 
         return $assistantToken;

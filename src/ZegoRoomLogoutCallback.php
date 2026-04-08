@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ZEGO;
+namespace Zego;
 
 /**
  * 退出房间回调 room_logout：签名校验与载荷解析

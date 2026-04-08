@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Test;
 
 use PHPUnit\Framework\Attributes\TestDox;
-use ZEGO\ZegoAssistantToken;
-use ZEGO\ZegoErrorCodes;
-use ZEGO\ZegoServerAssistant;
+use Zego\ZegoAssistantToken;
+use Zego\ZegoErrorCodes;
+use Zego\ZegoServerAssistant;
 
 /**
  * {@see ZegoServerAssistant::generateToken04} 各分支，便于调试鉴权 token 生成问题

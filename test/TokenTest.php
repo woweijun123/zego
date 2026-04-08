@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Test;
 
 use PHPUnit\Framework\Attributes\TestDox;
-use ZEGO\ZegoErrorCodes;
-use ZEGO\ZegoServerAssistant;
+use Zego\ZegoErrorCodes;
+use Zego\ZegoServerAssistant;
 
 use function Hyperf\Config\config;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ZEGO;
+namespace Zego;
 
 use Closure;
 use GuzzleHttp\Client;
@@ -22,11 +22,12 @@ readonly class ZegoRtcApiClient
     /**
      * @param null|Closure(string $url): array{status: int, body: string} $httpTransport 注入后不再使用 curl，便于单测捕获 URL 与模拟响应
      */
-    public function __construct(private int              $appId,
-                                private string           $serverSecret,
-                                private string           $baseUrl = 'https://rtc-api.zego.im',
-                                private bool|string|null $isTest = null,
-                                private ?Closure         $httpTransport = null
+    public function __construct(
+        private int              $appId,
+        private string           $serverSecret,
+        private string           $baseUrl = 'https://rtc-api.zego.im',
+        private bool|string|null $isTest = null,
+        private ?Closure         $httpTransport = null
     ) {
     }
 
@@ -149,12 +150,13 @@ readonly class ZegoRtcApiClient
         $timestamp      = time();
         $signature      = self::generateSignature($this->appId, $signatureNonce, $this->serverSecret, $timestamp);
 
-        $query = ['Action'           => $action,
-                  'AppId'            => $this->appId,
-                  'SignatureNonce'   => $signatureNonce,
-                  'Timestamp'        => $timestamp,
-                  'Signature'        => $signature,
-                  'SignatureVersion' => '2.0',
+        $query = [
+            'Action'           => $action,
+            'AppId'            => $this->appId,
+            'SignatureNonce'   => $signatureNonce,
+            'Timestamp'        => $timestamp,
+            'Signature'        => $signature,
+            'SignatureVersion' => '2.0',
         ];
         if ($this->isTest !== null) {
             if (is_bool($this->isTest)) {

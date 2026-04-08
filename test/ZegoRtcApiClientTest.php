@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Test;
 
 use PHPUnit\Framework\Attributes\TestDox;
-use ZEGO\ZegoRtcApiClient;
+use Zego\ZegoRtcApiClient;
 
 class ZegoRtcApiClientTest extends TestCase
 {
