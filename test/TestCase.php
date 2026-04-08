@@ -9,7 +9,7 @@ use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSourceFactory;
 
 // 定义BASE_PATH常量
-define('BASE_PATH', dirname(__DIR__));
+!defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
