@@ -1,26 +1,31 @@
 {
-  "name": "riven/hyperf-zego",
-  "type": "library",
-  "description": "Zego Server Assistant",
-  "keywords": [
-    "zego",
-    "Server Assistant"
-  ],
-  "homepage": "https://www.zego.im",
-  "license": "MIT",
-  "require": {
-    "php": ">=8.3",
-    "hyperf/guzzle": "^3.1",
-    "hyperf/config": "~3.1.0"
-  },
-  "require-dev": {
-    "hyperf/devtool": "~3.1.0",
-    "hyperf/testing": "^3.1"
-  },
-  "autoload": {
-    "psr-4": {
-      "ZEGO\\": "src/ZEGO",
-      "Test\\": "test/"
+    "name": "riven/hyperf-zego",
+    "type": "library",
+    "description": "Zego Server Assistant",
+    "keywords": [
+        "zego",
+        "Server Assistant"
+    ],
+    "homepage": "https://www.zego.im",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.3",
+        "hyperf/guzzle": "^3.1",
+        "hyperf/config": "~3.1.0"
+    },
+    "require-dev": {
+        "hyperf/devtool": "~3.1.0",
+        "hyperf/testing": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "ZEGO\\": "src/ZEGO",
+            "Test\\": "test/"
+        }
+    },
+    "extra": {
+        "hyperf": {
+            "config": "ZEGO\\ConfigProvider"
+        }
     }
-  }
 }

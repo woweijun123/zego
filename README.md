@@ -5,17 +5,18 @@ Composer Autoload，即使用composer的PSR-4自动加载机制实现加载
 2. `vim /my_project/composer.json`加入`psr-4`自动加载配置
 ```json
 {
-  ...
   "autoload": {
     "psr-4": {
       "ZEGO\\": "zego/src/ZEGO"
     }
   }
-  ...
 }
 ```
 3. 执行 `composer dump-autoload` 或 `composer dump-autoload -o`（生产环境适用） 或 `composer update` 命令，生成自动加载文件
-
+4. 发布配置文件：
+```bash
+php bin/hyperf.php vendor:publish riven/hyperf-zego
+```
 ## 使用
 ### 普通token 生成demo
 - 在`/my_project/xxx.php`文件中使用
