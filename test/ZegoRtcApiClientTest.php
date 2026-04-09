@@ -32,7 +32,7 @@ class ZegoRtcApiClientTest extends TestCase
 
         $out = $client->closeRoom('roomAbc');
 
-        $this->assertSame(0, $out['Code']);
+        $this->assertSame(0, $out->code);
         $this->assertNotNull($captured);
         $q = $this->parseQuery($captured);
         $this->assertSame('CloseRoom', $q['Action']);
@@ -204,7 +204,8 @@ class ZegoRtcApiClientTest extends TestCase
         $q   = $this->parseQuery($captured);
         $this->assertSame('DescribeSimpleStreamList', $q['Action']);
         $this->assertSame('rid', $q['RoomId']);
-        $this->assertSame([], $out['Data']['StreamList'] ?? null);
+        $this->assertIsArray($out->data);
+        $this->assertSame([], $out->data['StreamList'] ?? null);
     }
 
     #[TestDox('公共参数 IsTest：构造为 bool true 时 query 中为字符串 true')]

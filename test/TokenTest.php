@@ -13,12 +13,12 @@ use function Hyperf\Config\config;
 class TokenTest extends TestCase
 {
     // 权限位定义
-    const PrivilegeKeyLogin   = 1;                                                                                                          // 登录的权限
-    const PrivilegeKeyPublish = 2;                                                                                                          // 推流的权限
+    const PrivilegeKeyLogin   = 1;                                                                                                                                             // 登录的权限
+    const PrivilegeKeyPublish = 2;                                                                                                                                             // 推流的权限
 
     // 权限开关定义
-    const PrivilegeEnable  = 1;                                                                                                             // 开启
-    const PrivilegeDisable = 0;                                                                                                             // 关闭
+    const PrivilegeEnable  = 1;                                                                                                                                                // 开启
+    const PrivilegeDisable = 0;                                                                                                                                                // 关闭
 
     #[TestDox('基础鉴权：按配置用空 payload 生成 Token04 且返回成功')]
     public function testGenerateToken(): void

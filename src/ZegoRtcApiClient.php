@@ -46,10 +46,9 @@ readonly class ZegoRtcApiClient
      * @param string      $roomId
      * @param string|null $customReason
      * @param bool|null   $roomCloseCallback
-     * @return array<string, mixed>
      * @throws RandomException
      */
-    public function closeRoom(string $roomId, ?string $customReason = null, ?bool $roomCloseCallback = null): array
+    public function closeRoom(string $roomId, ?string $customReason = null, ?bool $roomCloseCallback = null): ZegoRtcApiResponse
     {
         $params = ['RoomId' => $roomId];
         if ($customReason !== null) {
@@ -67,11 +66,10 @@ readonly class ZegoRtcApiClient
      * @param string       $roomId
      * @param list<string> $userIds
      * @param string|null  $customReason
-     * @return array<string, mixed>
      * @throws RandomException
      * @see https://doc-zh.zego.im/real-time-video-server/api-reference/room/kick-out-user
      */
-    public function kickoutUser(string $roomId, array $userIds, ?string $customReason = null): array
+    public function kickoutUser(string $roomId, array $userIds, ?string $customReason = null): ZegoRtcApiResponse
     {
         $n = count($userIds);
         if ($n < 1 || $n > 5) {
@@ -91,10 +89,9 @@ readonly class ZegoRtcApiClient
      * @see https://doc-zh.zego.im/real-time-video-server/api-reference/media-service/forbid-rtc-stream
      * @param string $streamId
      * @param int    $sequence
-     * @return array<string, mixed>
      * @throws RandomException
      */
-    public function forbidRtcStream(string $streamId, int $sequence): array
+    public function forbidRtcStream(string $streamId, int $sequence): ZegoRtcApiResponse
     {
         return $this->requestGet('ForbidRTCStream', ['StreamId' => $streamId, 'Sequence' => $sequence,]);
     }
@@ -104,10 +101,9 @@ readonly class ZegoRtcApiClient
      * @see https://doc-zh.zego.im/real-time-video-server/api-reference/media-service/resume-rtc-stream
      * @param string $streamId
      * @param int    $sequence
-     * @return array<string, mixed>
      * @throws RandomException
      */
-    public function resumeRtcStream(string $streamId, int $sequence): array
+    public function resumeRtcStream(string $streamId, int $sequence): ZegoRtcApiResponse
     {
         return $this->requestGet('ResumeRTCStream', ['StreamId' => $streamId, 'Sequence' => $sequence,]);
     }
@@ -115,11 +111,10 @@ readonly class ZegoRtcApiClient
     /**
      * 获取房间内简易流列表 DescribeSimpleStreamList
      * @param string $roomId
-     * @return array<string, mixed>
      * @throws RandomException
      * @see https://doc-zh.zego.im/real-time-video-server/api-reference/room/describe-simple-streamlist
      */
-    public function describeSimpleStreamList(string $roomId): array
+    public function describeSimpleStreamList(string $roomId): ZegoRtcApiResponse
     {
         return $this->requestGet('DescribeSimpleStreamList', ['RoomId' => $roomId,]);
     }
@@ -128,10 +123,9 @@ readonly class ZegoRtcApiClient
      * @param string                      $action
      * @param array<string, scalar|null>  $params
      * @param array<string, list<string>> $repeatParams 同一 key 多次出现在 query 中
-     * @return array<string, mixed>
      * @throws RandomException
      */
-    private function requestGet(string $action, array $params = [], array $repeatParams = []): array
+    private function requestGet(string $action, array $params = [], array $repeatParams = []): ZegoRtcApiResponse
     {
         $url = $this->buildSignedUrl($action, $params, $repeatParams);
 
@@ -180,26 +174,25 @@ readonly class ZegoRtcApiClient
 
     /**
      * @param string $url
-     * @return array<string, mixed>
      * @throws RuntimeException
      */
-    private function httpGetJson(string $url): array
+    private function httpGetJson(string $url): ZegoRtcApiResponse
     {
         // 1. 如果有自定义传输层，保持原有逻辑（可选，如果 Guzzle 可以完全替代则移除）
         if ($this->httpTransport !== null) {
             /** @var array{status: int, body: string} $res */
             $res = ($this->httpTransport)($url);
 
-            return $this->processRawResponse($res['status'] ?? 0, $res['body'] ?? '');
+            return $this->processRawResponse((int)($res['status'] ?? 0), (string)($res['body'] ?? ''));
         }
 
         // 2. 使用 Guzzle Client
         try {
-            $options = [
+            $options  = [
                 RequestOptions::TIMEOUT     => 30, // 30 秒超时
                 RequestOptions::HTTP_ERRORS => false, // 禁用自动抛出异常，以便我们手动处理 body 内容
             ];
-            $client  = ApplicationContext::getContainer()->get(ClientFactory::class)->create($options);
+            $client   = ApplicationContext::getContainer()->get(ClientFactory::class)->create($options);
             $response = $client->get($url);
             $code     = $response->getStatusCode();
             $body     = (string)$response->getBody();
@@ -213,7 +206,7 @@ readonly class ZegoRtcApiClient
             /** @var array<string, mixed> $decoded */
             $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 
-            return $decoded;
+            return ZegoRtcApiResponse::fromDecodedArray($decoded);
         } catch (GuzzleException $e) {
             // 捕获网络连接、超时等异常
             throw new RuntimeException('HTTP request failed: ' . $e->getMessage(), $e->getCode(), $e);
@@ -226,14 +219,17 @@ readonly class ZegoRtcApiClient
     /**
      * 提取公共的响应处理逻辑（可选）
      */
-    private function processRawResponse(int $code, string $body): array
+    private function processRawResponse(int $code, string $body): ZegoRtcApiResponse
     {
         if ($code < 200 || $code >= 300) {
             throw new RuntimeException('HTTP status ' . $code . ': ' . $body, $code);
         }
 
         try {
-            return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+            /** @var array<string, mixed> $decoded */
+            $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+
+            return ZegoRtcApiResponse::fromDecodedArray($decoded);
         } catch (JsonException $e) {
             throw new RuntimeException('Invalid JSON response: ' . $body, 0, $e);
         }

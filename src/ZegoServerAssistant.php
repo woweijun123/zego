@@ -6,13 +6,12 @@ use Exception;
 
 class ZegoServerAssistant
 {
-
-    private static function makeNonce()
+    private static function makeNonce(): int
     {
         return mt_rand();
     }
 
-    private static function makeRandomIv($number = 16)
+    private static function makeRandomIv($number = 16): string
     {
         $str = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -34,7 +33,7 @@ class ZegoServerAssistant
      * @param string  $payload                业务扩展字段，json串
      * @return ZegoAssistantToken 返回 token 内容，在使用前，请检查 code 字段是否为 ZegoErrorCodes::success。实际 token 内容保存在 token 字段中
      */
-    public static function generateToken04($appId, $userId, $secret, $effectiveTimeInSeconds, $payload)
+    public static function generateToken04($appId, $userId, $secret, $effectiveTimeInSeconds, $payload): ZegoAssistantToken
     {
         $assistantToken = new ZegoAssistantToken();
 
