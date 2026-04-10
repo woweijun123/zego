@@ -32,9 +32,7 @@ class Zego
 
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        $manager = self::manager();
-
-        return $manager->{$name}(...$arguments);
+        return self::manager()->{$name}(...$arguments);
     }
 
     /**
