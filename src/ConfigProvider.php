@@ -10,6 +10,8 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
+                ZegoRtcApiClient::class => ZegoRtcApiClientFactory::class,
+                ZegoManager::class      => ZegoManager::class,
             ],
             'listeners'    => [
             ],
