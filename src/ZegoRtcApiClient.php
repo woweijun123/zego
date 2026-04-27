@@ -11,6 +11,8 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Guzzle\ClientFactory;
 use InvalidArgumentException;
 use JsonException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Random\RandomException;
 use RuntimeException;
 
@@ -38,6 +40,127 @@ readonly class ZegoRtcApiClient
     public static function generateSignature(int $appId, string $signatureNonce, string $serverSecret, int $timestamp): string
     {
         return md5($appId . $signatureNonce . $serverSecret . $timestamp);
+    }
+
+    /**
+     * @param string                      $action
+     * @param array<string, scalar|null>  $params
+     * @param array<string, list<string>> $repeatParams 同一 key 多次出现在 query 中
+     * @return ZegoRtcApiResponse
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RandomException
+     */
+    private function requestGet(string $action, array $params = [], array $repeatParams = []): ZegoRtcApiResponse
+    {
+        $url = $this->buildSignedUrl($action, $params, $repeatParams);
+
+        return $this->httpGetJson($url);
+    }
+
+    /**
+     * @param string                      $action
+     * @param array<string, scalar|null>  $params
+     * @param array<string, list<string>> $repeatParams
+     * @return string
+     * @throws RandomException
+     */
+    private function buildSignedUrl(string $action, array $params, array $repeatParams = []): string
+    {
+        $signatureNonce = bin2hex(random_bytes(8));
+        $timestamp      = time();
+        $signature      = self::generateSignature($this->appId, $signatureNonce, $this->serverSecret, $timestamp);
+
+        $query = [
+            'Action'           => $action,
+            'AppId'            => $this->appId,
+            'SignatureNonce'   => $signatureNonce,
+            'Timestamp'        => $timestamp,
+            'Signature'        => $signature,
+            'SignatureVersion' => '2.0',
+        ];
+        if ($this->isTest !== null) {
+            if (is_bool($this->isTest)) {
+                $query['IsTest'] = $this->isTest ? 'true' : 'false';
+            } else {
+                $query['IsTest'] = (string)$this->isTest;
+            }
+        }
+        $query = array_merge($query, $params);
+
+        $qs = http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+        foreach ($repeatParams as $key => $values) {
+            foreach ($values as $value) {
+                $qs .= '&' . rawurlencode($key) . '=' . rawurlencode($value);
+            }
+        }
+
+        return rtrim($this->baseUrl, '/') . '/?' . $qs;
+    }
+
+    /**
+     * @param string $url
+     * @return ZegoRtcApiResponse
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    private function httpGetJson(string $url): ZegoRtcApiResponse
+    {
+        // 1. 如果有自定义传输层，保持原有逻辑（可选，如果 Guzzle 可以完全替代则移除）
+        if ($this->httpTransport !== null) {
+            /** @var array{status: int, body: string} $res */
+            $res = ($this->httpTransport)($url);
+
+            return $this->processRawResponse((int)($res['status'] ?? 0), (string)($res['body'] ?? ''));
+        }
+
+        // 2. 使用 Guzzle Client
+        try {
+            $options  = [
+                RequestOptions::TIMEOUT     => 30, // 30 秒超时
+                RequestOptions::HTTP_ERRORS => false, // 禁用自动抛出异常，以便我们手动处理 body 内容
+            ];
+            $client   = ApplicationContext::getContainer()->get(ClientFactory::class)->create($options);
+            $response = $client->get($url);
+            $code     = $response->getStatusCode();
+            $body     = (string)$response->getBody();
+
+            // 3. 校验状态码
+            if ($code < 200 || $code >= 300) {
+                throw new RuntimeException('HTTP status ' . $code . ': ' . $body, $code);
+            }
+
+            // 4. 解析 JSON
+            /** @var array<string, mixed> $decoded */
+            $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+
+            return ZegoRtcApiResponse::fromDecodedArray($decoded);
+        } catch (GuzzleException $e) {
+            // 捕获网络连接、超时等异常
+            throw new RuntimeException('HTTP request failed: ' . $e->getMessage(), $e->getCode(), $e);
+        } catch (JsonException $e) {
+            // 捕获 JSON 解析异常
+            throw new RuntimeException('Invalid JSON response: ' . ($body ?? 'Empty'), 0, $e);
+        }
+    }
+
+    /**
+     * 提取公共的响应处理逻辑（可选）
+     */
+    private function processRawResponse(int $code, string $body): ZegoRtcApiResponse
+    {
+        if ($code < 200 || $code >= 300) {
+            throw new RuntimeException('HTTP status ' . $code . ': ' . $body, $code);
+        }
+
+        try {
+            /** @var array<string, mixed> $decoded */
+            $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+
+            return ZegoRtcApiResponse::fromDecodedArray($decoded);
+        } catch (JsonException $e) {
+            throw new RuntimeException('Invalid JSON response: ' . $body, 0, $e);
+        }
     }
 
     /**
@@ -117,121 +240,5 @@ readonly class ZegoRtcApiClient
     public function describeSimpleStreamList(string $roomId): ZegoRtcApiResponse
     {
         return $this->requestGet('DescribeSimpleStreamList', ['RoomId' => $roomId,]);
-    }
-
-    /**
-     * @param string                      $action
-     * @param array<string, scalar|null>  $params
-     * @param array<string, list<string>> $repeatParams 同一 key 多次出现在 query 中
-     * @throws RandomException
-     */
-    private function requestGet(string $action, array $params = [], array $repeatParams = []): ZegoRtcApiResponse
-    {
-        $url = $this->buildSignedUrl($action, $params, $repeatParams);
-
-        return $this->httpGetJson($url);
-    }
-
-    /**
-     * @param string                      $action
-     * @param array<string, scalar|null>  $params
-     * @param array<string, list<string>> $repeatParams
-     * @return string
-     * @throws RandomException
-     */
-    private function buildSignedUrl(string $action, array $params, array $repeatParams = []): string
-    {
-        $signatureNonce = bin2hex(random_bytes(8));
-        $timestamp      = time();
-        $signature      = self::generateSignature($this->appId, $signatureNonce, $this->serverSecret, $timestamp);
-
-        $query = [
-            'Action'           => $action,
-            'AppId'            => $this->appId,
-            'SignatureNonce'   => $signatureNonce,
-            'Timestamp'        => $timestamp,
-            'Signature'        => $signature,
-            'SignatureVersion' => '2.0',
-        ];
-        if ($this->isTest !== null) {
-            if (is_bool($this->isTest)) {
-                $query['IsTest'] = $this->isTest ? 'true' : 'false';
-            } else {
-                $query['IsTest'] = (string)$this->isTest;
-            }
-        }
-        $query = array_merge($query, $params);
-
-        $qs = http_build_query($query, '', '&', PHP_QUERY_RFC3986);
-        foreach ($repeatParams as $key => $values) {
-            foreach ($values as $value) {
-                $qs .= '&' . rawurlencode($key) . '=' . rawurlencode($value);
-            }
-        }
-
-        return rtrim($this->baseUrl, '/') . '/?' . $qs;
-    }
-
-    /**
-     * @param string $url
-     * @throws RuntimeException
-     */
-    private function httpGetJson(string $url): ZegoRtcApiResponse
-    {
-        // 1. 如果有自定义传输层，保持原有逻辑（可选，如果 Guzzle 可以完全替代则移除）
-        if ($this->httpTransport !== null) {
-            /** @var array{status: int, body: string} $res */
-            $res = ($this->httpTransport)($url);
-
-            return $this->processRawResponse((int)($res['status'] ?? 0), (string)($res['body'] ?? ''));
-        }
-
-        // 2. 使用 Guzzle Client
-        try {
-            $options  = [
-                RequestOptions::TIMEOUT     => 30, // 30 秒超时
-                RequestOptions::HTTP_ERRORS => false, // 禁用自动抛出异常，以便我们手动处理 body 内容
-            ];
-            $client   = ApplicationContext::getContainer()->get(ClientFactory::class)->create($options);
-            $response = $client->get($url);
-            $code     = $response->getStatusCode();
-            $body     = (string)$response->getBody();
-
-            // 3. 校验状态码
-            if ($code < 200 || $code >= 300) {
-                throw new RuntimeException('HTTP status ' . $code . ': ' . $body, $code);
-            }
-
-            // 4. 解析 JSON
-            /** @var array<string, mixed> $decoded */
-            $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-
-            return ZegoRtcApiResponse::fromDecodedArray($decoded);
-        } catch (GuzzleException $e) {
-            // 捕获网络连接、超时等异常
-            throw new RuntimeException('HTTP request failed: ' . $e->getMessage(), $e->getCode(), $e);
-        } catch (JsonException $e) {
-            // 捕获 JSON 解析异常
-            throw new RuntimeException('Invalid JSON response: ' . ($body ?? 'Empty'), 0, $e);
-        }
-    }
-
-    /**
-     * 提取公共的响应处理逻辑（可选）
-     */
-    private function processRawResponse(int $code, string $body): ZegoRtcApiResponse
-    {
-        if ($code < 200 || $code >= 300) {
-            throw new RuntimeException('HTTP status ' . $code . ': ' . $body, $code);
-        }
-
-        try {
-            /** @var array<string, mixed> $decoded */
-            $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-
-            return ZegoRtcApiResponse::fromDecodedArray($decoded);
-        } catch (JsonException $e) {
-            throw new RuntimeException('Invalid JSON response: ' . $body, 0, $e);
-        }
     }
 }
