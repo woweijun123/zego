@@ -28,5 +28,11 @@
         "hyperf": {
             "config": "Zego\\ConfigProvider"
         }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "http://10.0.0.6:83"
+        }
     }
 }
