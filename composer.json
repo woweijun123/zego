@@ -6,7 +6,7 @@
         "zego",
         "Server Assistant"
     ],
-    "homepage": "https://www.zego.im",
+    "homepage": "https://github.com/woweijun123/zego",
     "license": "MIT",
     "require": {
         "php": ">=8.3",
