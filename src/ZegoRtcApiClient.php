@@ -216,7 +216,7 @@ readonly class ZegoRtcApiClient
      */
     public function forbidRtcStream(string $streamId, int $sequence): ZegoRtcApiResponse
     {
-        return $this->requestGet('ForbidRTCStream', ['StreamId' => $streamId, 'Sequence' => $sequence,]);
+        return $this->requestGet('ForbidRTCStream', ['StreamId' => $streamId, 'Sequence' => $sequence]);
     }
 
     /**
@@ -228,7 +228,7 @@ readonly class ZegoRtcApiClient
      */
     public function resumeRtcStream(string $streamId, int $sequence): ZegoRtcApiResponse
     {
-        return $this->requestGet('ResumeRTCStream', ['StreamId' => $streamId, 'Sequence' => $sequence,]);
+        return $this->requestGet('ResumeRTCStream', ['StreamId' => $streamId, 'Sequence' => $sequence]);
     }
 
     /**
@@ -239,6 +239,6 @@ readonly class ZegoRtcApiClient
      */
     public function describeSimpleStreamList(string $roomId): ZegoRtcApiResponse
     {
-        return $this->requestGet('DescribeSimpleStreamList', ['RoomId' => $roomId,]);
+        return $this->requestGet('DescribeSimpleStreamList', ['RoomId' => $roomId]);
     }
 }
