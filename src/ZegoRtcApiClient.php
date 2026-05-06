@@ -12,7 +12,6 @@ use Hyperf\Guzzle\ClientFactory;
 use InvalidArgumentException;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Random\RandomException;
 use RuntimeException;
 
@@ -23,7 +22,11 @@ use RuntimeException;
 readonly class ZegoRtcApiClient
 {
     /**
-     * @param null|Closure(string $url): array{status: int, body: string} $httpTransport 注入后不再使用 curl，便于单测捕获 URL 与模拟响应
+     * 构造函数
+     * @param string           $serverSecret
+     * @param string           $baseUrl
+     * @param bool|string|null $isTest
+     * @param Closure|null     $httpTransport
      */
     public function __construct(
         private int              $appId,
@@ -43,66 +46,63 @@ readonly class ZegoRtcApiClient
     }
 
     /**
-     * @param string                      $action
-     * @param array<string, scalar|null>  $params
-     * @param array<string, list<string>> $repeatParams 同一 key 多次出现在 query 中
+     * 发送 GET 请求
+     * @param string $action
+     * @param array  $params
+     * @param array  $repeatParams
      * @return ZegoRtcApiResponse
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws RandomException
      */
     private function requestGet(string $action, array $params = [], array $repeatParams = []): ZegoRtcApiResponse
     {
-        $url = $this->buildSignedUrl($action, $params, $repeatParams);
-
-        return $this->httpGetJson($url);
+        return $this->httpGetJson($this->buildSignedUrl($action, $params, $repeatParams));
     }
 
     /**
-     * @param string                      $action
-     * @param array<string, scalar|null>  $params
-     * @param array<string, list<string>> $repeatParams
+     * 构建签名后的 URL
+     * @param string $action
+     * @param array  $params
+     * @param array  $repeatParams
      * @return string
-     * @throws RandomException
      */
     private function buildSignedUrl(string $action, array $params, array $repeatParams = []): string
     {
-        $signatureNonce = bin2hex(random_bytes(8));
-        $timestamp      = time();
-        $signature      = self::generateSignature($this->appId, $signatureNonce, $this->serverSecret, $timestamp);
-
-        $query = [
-            'Action'           => $action,
-            'AppId'            => $this->appId,
-            'SignatureNonce'   => $signatureNonce,
-            'Timestamp'        => $timestamp,
-            'Signature'        => $signature,
-            'SignatureVersion' => '2.0',
-        ];
-        if ($this->isTest !== null) {
-            if (is_bool($this->isTest)) {
-                $query['IsTest'] = $this->isTest ? 'true' : 'false';
-            } else {
-                $query['IsTest'] = (string)$this->isTest;
+        try {
+            $signatureNonce = bin2hex(random_bytes(8));
+            $timestamp      = time();
+            $signature      = self::generateSignature($this->appId, $signatureNonce, $this->serverSecret, $timestamp);
+            $query          = [
+                'Action'           => $action,
+                'AppId'            => $this->appId,
+                'SignatureNonce'   => $signatureNonce,
+                'Timestamp'        => $timestamp,
+                'Signature'        => $signature,
+                'SignatureVersion' => '2.0',
+            ];
+            if ($this->isTest !== null) {
+                if (is_bool($this->isTest)) {
+                    $query['IsTest'] = $this->isTest ? 'true' : 'false';
+                } else {
+                    $query['IsTest'] = (string)$this->isTest;
+                }
             }
-        }
-        $query = array_merge($query, $params);
-
-        $qs = http_build_query($query, '', '&', PHP_QUERY_RFC3986);
-        foreach ($repeatParams as $key => $values) {
-            foreach ($values as $value) {
-                $qs .= '&' . rawurlencode($key) . '=' . rawurlencode($value);
+            $query = array_merge($query, $params);
+            $qs    = http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+            foreach ($repeatParams as $key => $values) {
+                foreach ($values as $value) {
+                    $qs .= '&' . rawurlencode((string)$key) . '=' . rawurlencode((string)$value);
+                }
             }
-        }
 
-        return rtrim($this->baseUrl, '/') . '/?' . $qs;
+            return rtrim($this->baseUrl, '/') . '/?' . $qs;
+        } catch (RandomException $e) {
+            throw new RuntimeException('Random exception: ' . $e->getMessage(), 0, $e);
+        }
     }
 
     /**
+     * 发送 GET 请求并解析 JSON 响应
      * @param string $url
      * @return ZegoRtcApiResponse
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     private function httpGetJson(string $url): ZegoRtcApiResponse
     {
@@ -141,11 +141,17 @@ readonly class ZegoRtcApiClient
         } catch (JsonException $e) {
             // 捕获 JSON 解析异常
             throw new RuntimeException('Invalid JSON response: ' . ($body ?? 'Empty'), 0, $e);
+        } catch (ContainerExceptionInterface $e) {
+            // 捕获容器异常
+            throw new RuntimeException('Container exception: ' . $e->getMessage(), 0, $e);
         }
     }
 
     /**
      * 提取公共的响应处理逻辑（可选）
+     * @param int    $code
+     * @param string $body
+     * @return ZegoRtcApiResponse
      */
     private function processRawResponse(int $code, string $body): ZegoRtcApiResponse
     {
@@ -169,7 +175,7 @@ readonly class ZegoRtcApiClient
      * @param string      $roomId
      * @param string|null $customReason
      * @param bool|null   $roomCloseCallback
-     * @throws RandomException
+     * @return ZegoRtcApiResponse
      */
     public function closeRoom(string $roomId, ?string $customReason = null, ?bool $roomCloseCallback = null): ZegoRtcApiResponse
     {
@@ -186,11 +192,11 @@ readonly class ZegoRtcApiClient
 
     /**
      * 踢出用户 KickoutUser（同一请求最多 5 个 userId）
+     * @see https://doc-zh.zego.im/real-time-video-server/api-reference/room/kick-out-user
      * @param string       $roomId
      * @param list<string> $userIds
      * @param string|null  $customReason
-     * @throws RandomException
-     * @see https://doc-zh.zego.im/real-time-video-server/api-reference/room/kick-out-user
+     * @return ZegoRtcApiResponse
      */
     public function kickoutUser(string $roomId, array $userIds, ?string $customReason = null): ZegoRtcApiResponse
     {
@@ -211,10 +217,10 @@ readonly class ZegoRtcApiClient
      * 禁止 RTC 推流 ForbidRTCStream
      * @see https://doc-zh.zego.im/real-time-video-server/api-reference/media-service/forbid-rtc-stream
      * @param string $streamId
-     * @param int    $sequence
-     * @throws RandomException
+     * @param string $sequence
+     * @return ZegoRtcApiResponse
      */
-    public function forbidRtcStream(string $streamId, int $sequence): ZegoRtcApiResponse
+    public function forbidRtcStream(string $streamId, string $sequence): ZegoRtcApiResponse
     {
         return $this->requestGet('ForbidRTCStream', ['StreamId' => $streamId, 'Sequence' => $sequence]);
     }
@@ -223,19 +229,19 @@ readonly class ZegoRtcApiClient
      * 恢复 RTC 推流 ResumeRTCStream
      * @see https://doc-zh.zego.im/real-time-video-server/api-reference/media-service/resume-rtc-stream
      * @param string $streamId
-     * @param int    $sequence
-     * @throws RandomException
+     * @param string $sequence
+     * @return ZegoRtcApiResponse
      */
-    public function resumeRtcStream(string $streamId, int $sequence): ZegoRtcApiResponse
+    public function resumeRtcStream(string $streamId, string $sequence): ZegoRtcApiResponse
     {
         return $this->requestGet('ResumeRTCStream', ['StreamId' => $streamId, 'Sequence' => $sequence]);
     }
 
     /**
      * 获取房间内简易流列表 DescribeSimpleStreamList
-     * @param string $roomId
-     * @throws RandomException
      * @see https://doc-zh.zego.im/real-time-video-server/api-reference/room/describe-simple-streamlist
+     * @param string $roomId
+     * @return ZegoRtcApiResponse
      */
     public function describeSimpleStreamList(string $roomId): ZegoRtcApiResponse
     {

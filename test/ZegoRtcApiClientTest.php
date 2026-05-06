@@ -140,7 +140,7 @@ class ZegoRtcApiClientTest extends TestCase
         );
 
         $this->expectException(\InvalidArgumentException::class);
-        $client->kickoutUser('room1', ['1', '2', '3', '4', '5', '6']);
+        $client->kickoutUser('room1', [1, 2, 3, 4, 5, 6]);
     }
 
     #[TestDox('ForbidRTCStream：query 含 StreamId、Sequence 且 Signature 正确')]
@@ -159,7 +159,7 @@ class ZegoRtcApiClientTest extends TestCase
             },
         );
 
-        $client->forbidRtcStream('streamX', 1_704_000_000);
+        $client->forbidRtcStream('streamX', '1704000000');
         $q = $this->parseQuery($captured);
         $this->assertSame('ForbidRTCStream', $q['Action']);
         $this->assertSame('streamX', $q['StreamId']);
