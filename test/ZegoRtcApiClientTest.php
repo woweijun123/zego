@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Test;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\TestDox;
+use RuntimeException;
 use Zego\ZegoRtcApiClient;
 
 class ZegoRtcApiClientTest extends TestCase
 {
-    private const APP_ID = 1234567890;
+    private const int APP_ID = 1234567890;
 
-    private const SERVER_SECRET = 'fa94dd0f974cf2e293728a526b028271';
+    private const string SERVER_SECRET = 'fa94dd0f974cf2e293728a526b028271';
 
     #[TestDox('服务端 API 签名：generateSignature 与官方文档 MD5 示例向量一致')]
     public function testGenerateSignatureMatchesDocExample(): void
@@ -124,7 +126,7 @@ class ZegoRtcApiClientTest extends TestCase
             static fn(): array => ['status' => 200, 'body' => '{}',]
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $client->kickoutUser('room1', []);
     }
 
@@ -139,7 +141,7 @@ class ZegoRtcApiClientTest extends TestCase
             static fn(): array => ['status' => 200, 'body' => '{}',]
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $client->kickoutUser('room1', [1, 2, 3, 4, 5, 6]);
     }
 
@@ -183,7 +185,7 @@ class ZegoRtcApiClientTest extends TestCase
             },
         );
 
-        $client->resumeRtcStream('streamY', 99);
+        $client->resumeRtcStream('streamY', '99');
         $q = $this->parseQuery($captured);
         $this->assertSame('ResumeRTCStream', $q['Action']);
         $this->assertSame('streamY', $q['StreamId']);
@@ -261,7 +263,7 @@ class ZegoRtcApiClientTest extends TestCase
             static fn(): array => ['status' => 503, 'body' => 'busy',]
         );
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('HTTP status 503');
         $client->closeRoom('r');
     }
@@ -277,7 +279,7 @@ class ZegoRtcApiClientTest extends TestCase
             static fn(): array => ['status' => 200, 'body' => 'not-json',]
         );
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid JSON response');
         $client->closeRoom('r');
     }
