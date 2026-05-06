@@ -11,7 +11,7 @@
     "require": {
         "php": ">=8.3",
         "hyperf/guzzle": "^3.0",
-        "hyperf/config": "~3.0.0",
+        "hyperf/config": "~3.0.0 || ~3.1.0",
         "ext-openssl": "*"
     },
     "require-dev": {
