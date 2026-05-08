@@ -42,7 +42,7 @@ class ZegoManager
     /**
      * @see ZegoRtcApiClient::forbidRtcStream
      */
-    public function forbidRtcStream(string $streamId, int $sequence): ZegoRtcApiResponse
+    public function forbidRtcStream(string $streamId, string $sequence): ZegoRtcApiResponse
     {
         return $this->rtcApiClient->forbidRtcStream($streamId, $sequence);
     }
@@ -50,7 +50,7 @@ class ZegoManager
     /**
      * @see ZegoRtcApiClient::resumeRtcStream
      */
-    public function resumeRtcStream(string $streamId, int $sequence): ZegoRtcApiResponse
+    public function resumeRtcStream(string $streamId, string $sequence): ZegoRtcApiResponse
     {
         return $this->rtcApiClient->resumeRtcStream($streamId, $sequence);
     }
