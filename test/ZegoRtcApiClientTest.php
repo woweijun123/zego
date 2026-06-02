@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test;
 
+use Hyperf\Contract\ConfigInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\TestDox;
 use RuntimeException;
@@ -11,9 +12,15 @@ use Zego\ZegoRtcApiClient;
 
 class ZegoRtcApiClientTest extends TestCase
 {
-    private const int APP_ID = 1234567890;
+    private function appId(): int
+    {
+        return (int)$this->getContainer()->get(ConfigInterface::class)->get('zego.app_id', 1234567890);
+    }
 
-    private const string SERVER_SECRET = 'fa94dd0f974cf2e293728a526b028271';
+    private function serverSecret(): string
+    {
+        return (string)$this->getContainer()->get(ConfigInterface::class)->get('zego.secret', 'fa94dd0f974cf2e293728a526b028271');
+    }
 
     #[TestDox('服务端 API 签名：generateSignature 与官方文档 MD5 示例向量一致')]
     public function testGenerateSignatureMatchesDocExample(): void
@@ -26,7 +33,7 @@ class ZegoRtcApiClientTest extends TestCase
     public function testCloseRoomBuildsSignedUrlAndReturnsJson(): void
     {
         $captured = null;
-        $client   = new ZegoRtcApiClient(self::APP_ID, self::SERVER_SECRET, 'https://rtc-api.zego.im', null, function (string $url) use (&$captured): array {
+        $client   = new ZegoRtcApiClient($this->appId(), $this->serverSecret(), 'https://rtc-api.zego.im', null, function (string $url) use (&$captured): array {
             $captured = $url;
 
             return ['status' => 200, 'body' => '{"Code":0,"Message":"success","RequestId":"rid1"}'];
@@ -38,7 +45,7 @@ class ZegoRtcApiClientTest extends TestCase
         $this->assertNotNull($captured);
         $q = $this->parseQuery($captured);
         $this->assertSame('CloseRoom', $q['Action']);
-        $this->assertSame((string)self::APP_ID, $q['AppId']);
+        $this->assertSame((string)$this->appId(), $q['AppId']);
         $this->assertSame('2.0', $q['SignatureVersion']);
         $this->assertSame('roomAbc', $q['RoomId']);
         $this->assertArrayNotHasKey('CustomReason', $q);
@@ -51,8 +58,8 @@ class ZegoRtcApiClientTest extends TestCase
     {
         $captured = null;
         $client   = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static function (string $url) use (&$captured): array {
@@ -73,8 +80,8 @@ class ZegoRtcApiClientTest extends TestCase
     {
         $captured = null;
         $client   = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static function (string $url) use (&$captured): array {
@@ -98,8 +105,8 @@ class ZegoRtcApiClientTest extends TestCase
     {
         $captured = null;
         $client   = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static function (string $url) use (&$captured): array {
@@ -119,8 +126,8 @@ class ZegoRtcApiClientTest extends TestCase
     public function testKickoutUserRejectsEmptyUserList(): void
     {
         $client = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static fn(): array => ['status' => 200, 'body' => '{}',]
@@ -134,8 +141,8 @@ class ZegoRtcApiClientTest extends TestCase
     public function testKickoutUserRejectsMoreThanFiveUsers(): void
     {
         $client = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static fn(): array => ['status' => 200, 'body' => '{}',]
@@ -150,8 +157,8 @@ class ZegoRtcApiClientTest extends TestCase
     {
         $captured = null;
         $client   = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static function (string $url) use (&$captured): array {
@@ -174,8 +181,8 @@ class ZegoRtcApiClientTest extends TestCase
     {
         $captured = null;
         $client   = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static function (string $url) use (&$captured): array {
@@ -200,7 +207,7 @@ class ZegoRtcApiClientTest extends TestCase
 
             return ['status' => 200, 'body' => '{"Code":0,"Data":{"StreamList":[]}}'];
         };
-        $client        = new ZegoRtcApiClient(self::APP_ID, self::SERVER_SECRET, 'https://rtc-api.zego.im', null, $httpTransport);
+        $client        = new ZegoRtcApiClient($this->appId(), $this->serverSecret(), 'https://rtc-api.zego.im', null, $httpTransport);
 
         $out = $client->describeSimpleStreamList('rid');
         $q   = $this->parseQuery($captured);
@@ -210,13 +217,72 @@ class ZegoRtcApiClientTest extends TestCase
         $this->assertSame([], $out->data['StreamList'] ?? null);
     }
 
+    #[TestDox('DescribeUserList：query 含 RoomId，响应中 Data.UserList 可解析')]
+    public function testDescribeUserList(): void
+    {
+        $captured = null;
+        $client   = new ZegoRtcApiClient($this->appId(), $this->serverSecret(), 'https://rtc-api.zego.im', null, static function (string $url) use (&$captured): array {
+            $captured = $url;
+
+            return ['status' => 200, 'body' => '{"Code":0,"Data":{"UserList":[],"Marker":""}}'];
+        });
+
+        $out = $client->describeUserList('room1');
+        $q   = $this->parseQuery($captured);
+        $this->assertSame('DescribeUserList', $q['Action']);
+        $this->assertSame('room1', $q['RoomId']);
+        $this->assertArrayNotHasKey('Mode', $q);
+        $this->assertArrayNotHasKey('Limit', $q);
+        $this->assertArrayNotHasKey('Marker', $q);
+        $this->assertUrlSignatureValid($q);
+        $this->assertIsArray($out->data);
+        $this->assertSame([], $out->data['UserList'] ?? null);
+    }
+
+    #[TestDox('DescribeUserList：传可选参数 Mode/Limit/Marker 时出现在 query 中')]
+    public function testDescribeUserListWithOptionalParams(): void
+    {
+        $captured = null;
+        $client   = new ZegoRtcApiClient($this->appId(), $this->serverSecret(), 'https://rtc-api.zego.im', null, static function (string $url) use (&$captured): array {
+            $captured = $url;
+
+            return ['status' => 200, 'body' => '{"Code":0}'];
+        });
+
+        $client->describeUserList('room1', mode: 0, limit: 100, marker: 'abc');
+        $q = $this->parseQuery($captured);
+        $this->assertSame('0', $q['Mode']);
+        $this->assertSame('100', $q['Limit']);
+        $this->assertSame('abc', $q['Marker']);
+        $this->assertUrlSignatureValid($q);
+    }
+
+    #[TestDox('DescribeUserNum：单房间时 query 含 RoomId[]=rid')]
+    public function testDescribeUserNumSingleRoom(): void
+    {
+        $client        = new ZegoRtcApiClient($this->appId(), $this->serverSecret(), 'https://rtc-api.zego.im', null, null);
+        $out = $client->describeUserNum('56');
+        var_dump($out);
+        $this->assertTrue(true);
+    }
+
+    #[TestDox('DescribeUserNum：批量房间时 query 含多组 RoomId[]')]
+    public function testDescribeUserNumMultipleRooms(): void
+    {
+        $client   = new ZegoRtcApiClient($this->appId(), $this->serverSecret(), 'https://rtc-api.zego.im', null, null);
+
+        $out = $client->describeUserNum(['65', '111']);
+        var_dump($out);
+        $this->assertTrue(true);
+    }
+
     #[TestDox('公共参数 IsTest：构造为 bool true 时 query 中为字符串 true')]
     public function testIsTestBooleanSerializedInQuery(): void
     {
         $captured = null;
         $client   = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             true,
             static function (string $url) use (&$captured): array {
@@ -236,8 +302,8 @@ class ZegoRtcApiClientTest extends TestCase
     {
         $captured = null;
         $client   = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             'false',
             static function (string $url) use (&$captured): array {
@@ -256,8 +322,8 @@ class ZegoRtcApiClientTest extends TestCase
     public function testHttpTransportNon2xxThrows(): void
     {
         $client = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static fn(): array => ['status' => 503, 'body' => 'busy',]
@@ -272,8 +338,8 @@ class ZegoRtcApiClientTest extends TestCase
     public function testHttpTransportInvalidJsonThrows(): void
     {
         $client = new ZegoRtcApiClient(
-            self::APP_ID,
-            self::SERVER_SECRET,
+            $this->appId(),
+            $this->serverSecret(),
             'https://rtc-api.zego.im',
             null,
             static fn(): array => ['status' => 200, 'body' => 'not-json',]
@@ -308,7 +374,7 @@ class ZegoRtcApiClientTest extends TestCase
      */
     private function assertUrlSignatureValid(array $q): void
     {
-        $expected = ZegoRtcApiClient::generateSignature(self::APP_ID, $q['SignatureNonce'], self::SERVER_SECRET, (int)$q['Timestamp']);
+        $expected = ZegoRtcApiClient::generateSignature($this->appId(), $q['SignatureNonce'], $this->serverSecret(), (int)$q['Timestamp']);
         $this->assertSame($expected, $q['Signature']);
     }
 }

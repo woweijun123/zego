@@ -64,6 +64,22 @@ class ZegoManager
     }
 
     /**
+     * @see ZegoRtcApiClient::describeUserList
+     */
+    public function describeUserList(string $roomId, ?int $mode = null, ?int $limit = null, ?string $marker = null): ZegoRtcApiResponse
+    {
+        return $this->rtcApiClient->describeUserList($roomId, $mode, $limit, $marker);
+    }
+
+    /**
+     * @see ZegoRtcApiClient::describeUserNum
+     */
+    public function describeUserNum(string|array $roomIds): ZegoRtcApiResponse
+    {
+        return $this->rtcApiClient->describeUserNum($roomIds);
+    }
+
+    /**
      * 使用配置中的 app_id、secret 生成 Token04。
      * @see ZegoServerAssistant::generateToken04
      */

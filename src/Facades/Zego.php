@@ -20,6 +20,8 @@ use Zego\ZegoRtcServerCallback;
  * @method static ZegoRtcApiResponse forbidRtcStream(string $streamId, string $sequence)
  * @method static ZegoRtcApiResponse resumeRtcStream(string $streamId, string $sequence)
  * @method static ZegoRtcApiResponse describeSimpleStreamList(string $roomId)
+ * @method static ZegoRtcApiResponse describeUserList(string $roomId, ?int $mode = null, ?int $limit = null, ?string $marker = null)
+ * @method static ZegoRtcApiResponse describeUserNum(string|array $roomIds)
  * @method static ZegoAssistantToken generateToken04(string $userId, int $effectiveTimeInSeconds, string $payload)
  * @method static bool verifyCallbackPayloadWithConfig(array $data, ?string $expectedEvent = null)
  */

@@ -247,4 +247,31 @@ readonly class ZegoRtcApiClient
     {
         return $this->requestGet('DescribeSimpleStreamList', ['RoomId' => $roomId]);
     }
+
+    /**
+     * 获取房间用户列表 DescribeUserList
+     * @see https://doc-zh.zego.im/real-time-video-server/api-reference/room/describe-user-list
+     * @param string $roomId 房间 ID
+     * @param int|null $mode 排序，0：时间正序，1：时间倒序
+     * @param int|null $limit 单次最大返回个数，0-200
+     * @param string|null $marker 用户起始位标识（分页）
+     * @return ZegoRtcApiResponse
+     */
+    public function describeUserList(string $roomId, ?int $mode = null, ?int $limit = null, ?string $marker = null): ZegoRtcApiResponse
+    {
+        $params = array_filter(['RoomId' => $roomId, 'Mode' => $mode, 'Limit' => $limit, 'Marker' => $marker], fn ($v) => $v !== null);
+        return $this->requestGet('DescribeUserList', $params);
+    }
+
+    /**
+     * 获取房间人数 DescribeUserNum
+     * @see https://doc-zh.zego.im/real-time-video-server/api-reference/room/describe-user-num
+     * @param string|string[] $roomIds 房间 ID，支持批量查询
+     * @return ZegoRtcApiResponse
+     */
+    public function describeUserNum(string|array $roomIds): ZegoRtcApiResponse
+    {
+        $roomIds = is_array($roomIds) ? $roomIds : [$roomIds];
+        return $this->requestGet('DescribeUserNum', [], ['RoomId[]' => $roomIds]);
+    }
 }
